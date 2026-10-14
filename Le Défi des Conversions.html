@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Le Défi des Conversions</title>
+<style>
+:root{--bg:#f3f1ff;--card:#fff;--tx:#1d2433;--mut:#5d6679;--ac:#6741d9;--ok:#2b8a3e;--ko:#c92a2a;--bd:#ddd8f5;--mas:#f76707;--vol:#1c7ed6;--gold:#f59f00;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#181530;--card:#241f45;--tx:#f1efff;--mut:#b6b0dd;--ac:#9775fa;--ok:#69db7c;--ko:#ff8787;--bd:#3b3470;--mas:#ff922b;--vol:#4dabf7;--gold:#ffd43b;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#181530;--card:#241f45;--tx:#f1efff;--mut:#b6b0dd;--ac:#9775fa;--ok:#69db7c;--ko:#ff8787;--bd:#3b3470;--mas:#ff922b;--vol:#4dabf7;--gold:#ffd43b;color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;line-height:1.45}
+main{max-width:580px;margin:0 auto;padding:14px 14px 40px}
+.hero{background:linear-gradient(135deg,#6741d9,#1c7ed6 60%,#12b886);color:#fff;border-radius:18px;padding:18px 16px;text-align:center;margin-bottom:14px}
+.hero h1{font-size:1.5rem;margin:0 0 2px}
+.hero p{margin:0;opacity:.92}
+.hud{display:flex;gap:8px;margin-bottom:12px}
+.pill{flex:1;background:var(--card);border:2px solid var(--bd);border-radius:12px;padding:8px;text-align:center;font-weight:700}
+.pill small{display:block;font-weight:500;color:var(--mut);font-size:.72rem}
+.pill.tok{border-color:var(--gold)}
+.card{background:var(--card);border:2px solid var(--bd);border-radius:16px;padding:20px;margin-bottom:14px;transition:border-color .2s}
+.card.mas{border-color:var(--mas)}.card.vol{border-color:var(--vol)}
+.bar{height:10px;background:var(--bd);border-radius:6px;overflow:hidden;margin-bottom:12px}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,#6741d9,#12b886);width:0;transition:width .3s}
+.tag{display:inline-block;padding:3px 12px;border-radius:20px;color:#fff;font-weight:700;font-size:.85rem}
+.tag.mas{background:var(--mas)}.tag.vol{background:var(--vol)}
+.q{font-size:1.9rem;font-weight:800;text-align:center;margin:12px 0 16px}
+.q span{color:var(--ac)}
+.row{display:flex;gap:8px;align-items:center;justify-content:center}
+input{font-size:1.3rem;width:9em;max-width:55%;padding:10px;border-radius:12px;border:3px solid var(--bd);background:var(--bg);color:var(--tx);text-align:center}
+input:focus{outline:none;border-color:var(--ac)}
+.unit{font-size:1.3rem;font-weight:800}
+button{font:inherit;font-weight:700;background:var(--ac);color:#fff;border:0;border-radius:12px;padding:11px 20px;cursor:pointer;margin:12px 4px 0;box-shadow:0 3px 0 rgba(0,0,0,.25)}
+:root:not([data-theme="light"]) button{color:#171233}
+@media (prefers-color-scheme:light){button{color:#fff}}
+button.alt{background:transparent;color:var(--ac);border:2px solid var(--ac);box-shadow:none}
+.cen{text-align:center}
+.fb{margin-top:14px;padding:12px;border-radius:12px;display:none}
+.fb.ok{display:block;background:color-mix(in srgb,var(--ok) 16%,transparent);border:2px solid var(--ok)}
+.fb.ko{display:block;background:color-mix(in srgb,var(--ko) 16%,transparent);border:2px solid var(--ko)}
+.hint{margin-top:10px;color:var(--mut);text-align:center;min-height:1.3em}
+.tw{overflow-x:auto}
+table{border-collapse:collapse;width:100%;margin-top:8px;font-size:.92rem}
+td,th{border:1px solid var(--bd);padding:6px 8px;text-align:left}
+summary{cursor:pointer;font-weight:700}
+.big{font-size:2.6rem;font-weight:800;text-align:center}
+.grade{font-size:1.25rem;font-weight:800;text-align:center;color:var(--ac)}
+.badges{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin:14px 0}
+.bdg{border:2px dashed var(--bd);border-radius:12px;padding:10px;text-align:center;opacity:.45;font-size:.88rem}
+.bdg b{display:block;font-size:1.6rem}
+.bdg.on{opacity:1;border:2px solid var(--gold);background:color-mix(in srgb,var(--gold) 14%,transparent)}
+.hide{display:none}
+.pop{animation:pop .5s}
+@keyframes pop{30%{transform:scale(1.25)}}
+.fl{position:fixed;top:-30px;font-size:1.6rem;pointer-events:none;animation:fall 2.6s linear forwards;z-index:9}
+@keyframes fall{to{transform:translateY(110vh) rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){.pop,.fl{animation:none}.fl{display:none}}
+</style>
+</head>
+<body>
+<main>
+<div class="hero"><h1>⚖️ Le Défi des Conversions 🧪</h1><p>Gagne un maximum de jetons 🪙 et débloque 4 badges !</p></div>
+
+<div class="card">
+<details><summary>📘 Aide-mémoire</summary>
+<div class="tw"><table>
+<tr><th>Masse</th><th>Volume</th></tr>
+<tr><td>1 kg = 1 000 g</td><td>1 L = 1 000 mL</td></tr>
+<tr><td>1 g = 1 000 mg</td><td>1 L = 100 cL</td></tr>
+<tr><td></td><td>1 L = 1 000 cm³ (1 mL = 1 cm³)</td></tr>
+</table></div></details>
+</div>
+
+<div id="start" class="card cen">
+<p><b>Les règles</b></p>
+<p>🪙 +2 jetons par bonne réponse<br>🔥 Série de 3 bonnes réponses : +1 jeton bonus<br>🔥🔥 Série de 5 et plus : +2 jetons bonus<br>💡 Un indice coûte 1 jeton</p>
+<button id="go">C'est parti !</button>
+<p id="best" class="hint"></p>
+</div>
+
+<div id="game" class="hide">
+<div class="hud">
+<div class="pill tok"><small>Jetons</small><span id="tk">🪙 0</span></div>
+<div class="pill"><small>Série</small><span id="st">🔥 0</span></div>
+<div class="pill"><small>Question</small><span id="num">1/10</span></div>
+</div>
+<div class="bar"><i id="pb"></i></div>
+<div class="card" id="qc">
+<div class="cen"><span class="tag" id="tag"></span></div>
+<div class="q" id="q"></div>
+<div class="row"><input id="ans" inputmode="decimal" autocomplete="off" aria-label="Ta réponse"><span class="unit" id="u"></span></div>
+<div class="cen"><button id="chk">Valider ✔</button><button id="hbtn" class="alt">💡 Indice (−1 🪙)</button><button id="nxt" class="hide">Suivant ➜</button></div>
+<div class="hint" id="hint"></div>
+<div class="fb" id="fb" role="status"></div>
+</div>
+</div>
+
+<div id="end" class="card hide">
+<div class="big" id="fs"></div>
+<div class="cen" id="ft" style="font-size:1.4rem;font-weight:800"></div>
+<div class="grade" id="gr"></div>
+<p class="cen" id="msg"></p>
+<div class="badges" id="bd"></div>
+<div class="cen"><button id="again">🔄 Rejouer</button></div>
+</div>
+</main>
+<script>
+// [valeur, départ, arrivée, facteur, explication, type]
+var BANK=[
+[2500,"g","kg",0.001,"1 kg = 1 000 g : on divise par 1 000.","m"],
+[750,"g","kg",0.001,"1 kg = 1 000 g : on divise par 1 000.","m"],
+[4,"g","mg",1000,"1 g = 1 000 mg : on multiplie par 1 000.","m"],
+[0.35,"g","mg",1000,"1 g = 1 000 mg : on multiplie par 1 000.","m"],
+[3,"L","mL",1000,"1 L = 1 000 mL : on multiplie par 1 000.","v"],
+[0.25,"L","mL",1000,"1 L = 1 000 mL : on multiplie par 1 000.","v"],
+[2,"L","cL",100,"1 L = 100 cL : on multiplie par 100.","v"],
+[0.75,"L","cL",100,"1 L = 100 cL : on multiplie par 100.","v"],
+[1.5,"L","cm³",1000,"1 L = 1 000 cm³ : on multiplie par 1 000.","v"],
+[0.04,"L","cm³",1000,"1 L = 1 000 cm³ : on multiplie par 1 000.","v"]
+];
+var $=function(i){return document.getElementById(i)};
+var fmt=function(n){return (+n.toFixed(6)).toLocaleString("fr-FR")};
+var order,i,score,tokens,streak,maxStreak,mOk,vOk,done,hinted;
+function shuffle(a){a=a.slice();for(var k=a.length-1;k>0;k--){var j=Math.floor(Math.random()*(k+1));var t=a[k];a[k]=a[j];a[j]=t}return a}
+function getBest(){try{return localStorage.getItem("conv_best")}catch(e){return null}}
+function setBest(v){try{localStorage.setItem("conv_best",String(v))}catch(e){}}
+function showBest(){var b=getBest();$("best").textContent=b?"🏆 Ton record : "+b+" jetons":""}
+function hud(bump){
+  $("tk").textContent="🪙 "+tokens;$("st").textContent="🔥 "+streak;$("num").textContent=(i+1)+"/10";
+  if(bump){$("tk").classList.remove("pop");void $("tk").offsetWidth;$("tk").classList.add("pop")}
+}
+function start(){
+  order=shuffle(BANK);i=0;score=0;tokens=0;streak=0;maxStreak=0;mOk=0;vOk=0;
+  $("start").classList.add("hide");$("end").classList.add("hide");$("game").classList.remove("hide");show()
+}
+function show(){
+  var c=order[i];done=false;hinted=false;
+  var m=c[5]==="m";
+  $("qc").className="card "+(m?"mas":"vol");
+  $("tag").className="tag "+(m?"mas":"vol");
+  $("tag").textContent=m?"⚖️ Masse":"🧪 Volume";
+  $("pb").style.width=(i*10)+"%";
+  $("q").innerHTML=fmt(c[0])+" "+c[1]+" = <span>?</span>";
+  $("u").textContent=c[2];
+  $("ans").value="";$("ans").disabled=false;
+  $("fb").className="fb";$("fb").textContent="";$("hint").textContent="";
+  $("chk").classList.remove("hide");$("hbtn").classList.remove("hide");$("nxt").classList.add("hide");
+  hud(false);$("ans").focus();
+}
+function hint(){
+  if(done||hinted)return;
+  var c=order[i];hinted=true;
+  if(tokens>0)tokens--;
+  $("hint").textContent="💡 "+c[4].split(":")[0]+".";hud(true);
+}
+function check(){
+  if(done)return;
+  var c=order[i],raw=$("ans").value.replace(/\s/g,"").replace(",",".");
+  if(raw===""||isNaN(+raw)){$("fb").className="fb ko";$("fb").textContent="Écris un nombre pour valider.";return}
+  var exp=c[0]*c[3],ok=Math.abs(+raw-exp)<1e-9;
+  done=true;$("ans").disabled=true;
+  if(ok){
+    score++;streak++;if(streak>maxStreak)maxStreak=streak;
+    if(c[5]==="m")mOk++;else vOk++;
+    var gain=2,bonus=streak>=5?2:(streak>=3?1:0);
+    tokens+=gain+bonus;
+    $("fb").className="fb ok";
+    $("fb").textContent="✅ Bravo ! "+fmt(c[0])+" "+c[1]+" = "+fmt(exp)+" "+c[2]+". +"+gain+" 🪙"+(bonus?" et +"+bonus+" bonus de série 🔥":"");
+  }else{
+    streak=0;
+    $("fb").className="fb ko";
+    $("fb").textContent="❌ Raté, ta série retombe à 0. "+c[4]+" Réponse : "+fmt(c[0])+" "+c[1]+" = "+fmt(exp)+" "+c[2]+".";
+  }
+  hud(ok);
+  $("chk").classList.add("hide");$("hbtn").classList.add("hide");$("nxt").classList.remove("hide");
+  $("nxt").textContent=i===9?"Voir mon résultat 🏁":"Suivant ➜";$("nxt").focus();
+}
+function next(){if(i>=9)finish();else{i++;show()}}
+function confetti(){
+  var e=["🪙","⭐","🎉","✨","🧪","⚖️"];
+  for(var k=0;k<28;k++){var s=document.createElement("span");s.className="fl";s.textContent=e[k%e.length];
+    s.style.left=Math.random()*95+"vw";s.style.animationDelay=Math.random()*1.2+"s";document.body.appendChild(s);
+    setTimeout(function(x){return function(){x.remove()}}(s),4500)}
+}
+function finish(){
+  $("game").classList.add("hide");$("end").classList.remove("hide");
+  $("fs").textContent=score+" / 10";
+  $("ft").textContent="🪙 "+tokens+" jetons gagnés";
+  var g,m;
+  if(score<=4){g="🥉 Apprenti des unités";m="Relis l'aide-mémoire et retente ta chance !"}
+  else if(score<=8){g="🥈 Presque maître des mesures";m="Encore un petit effort pour le sans-faute."}
+  else{g="🥇 Maître des conversions";m="Excellent, tu maîtrises les unités !"}
+  var b=getBest();
+  if(!b||tokens>+b){if(b)m+=" 🏆 Nouveau record !";setBest(tokens)}
+  $("gr").textContent=g;$("msg").textContent=m;
+  var B=[["⚖️","Roi des masses",mOk===4],["🧪","Roi des volumes",vOk===6],["🔥","Série de 5",maxStreak>=5],["⭐","Sans-faute",score===10]];
+  $("bd").innerHTML=B.map(function(x){return '<div class="bdg'+(x[2]?' on':'')+'"><b>'+(x[2]?x[0]:'🔒')+'</b>'+x[1]+'</div>'}).join("");
+  if(score>=7)confetti();
+}
+$("go").onclick=start;$("again").onclick=start;$("chk").onclick=check;$("nxt").onclick=next;$("hbtn").onclick=hint;
+$("ans").addEventListener("keydown",function(e){if(e.key==="Enter"){done?next():check()}});
+showBest();
+</script>
+</body>
+</html>
